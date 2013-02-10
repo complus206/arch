@@ -21,22 +21,32 @@ public:
     ServHandler() {
         // Your initialization goes here
         invokeTimes = 0;
+        
+        clock_t t1 = clock();
+        sleep(0);
+        clock_t t2 = clock();
+        double diff = (double)(t2 - t1) / CLOCKS_PER_SEC * 10;
+        printf("CLOCKS_PER_SEC = %d\r\n", CLOCKS_PER_SEC);
+        printf("sleep %f seconds!\r\n", diff);
     }
     
     void put(const Student& s) {
         // Your implementation goes here
         if(this->invokeTimes == 0)
         {
-            start = clock();
+            this->start = clock();
         }
         this->invokeTimes++;
         
-        if(this->invokeTimes == INVOKE_TIMES)
+        if(this->invokeTimes % INVOKE_TIMES == 0)
         {
             clock_t finish = clock();
-            double duration = (double)(finish - start) / CLOCKS_PER_SEC;
+            double duration = (double)(finish - this->start) / CLOCKS_PER_SEC * 10;
             printf("received %d times, used %fseconds, data is student no=%d;name='%s';sex=%d;age=%d;\r\n",
                    this->invokeTimes, duration, s.sno, s.sname.c_str(), s.ssex, s.sage);
+            
+            //reset clock
+            this->start = clock();
         }
     }
 

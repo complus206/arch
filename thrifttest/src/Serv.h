@@ -220,6 +220,6 @@ class ServMultiface : virtual public ServIf {
 
 };
 
-const int INVOKE_TIMES = 100000;
+const int INVOKE_TIMES = 10000;
 
 #endif

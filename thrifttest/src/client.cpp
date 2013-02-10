@@ -27,7 +27,22 @@ template <class T>
 std::string ConvertToString(T);
 
 int main(int argc, char **argv) {
-    boost::shared_ptr<TSocket> socket(new TSocket("localhost", 9090));
+    
+    const char* defaultSvrAddr = "localhost";
+    string svrAddr;
+    
+    if(argc > 1)
+    {
+        **argv++;
+        svrAddr = string(*argv);
+    }
+    else
+    {
+        svrAddr = string(defaultSvrAddr);
+    }
+    printf("connect to %s...\r\n", svrAddr.c_str());
+    
+    boost::shared_ptr<TSocket> socket(new TSocket(svrAddr, 9090));
     boost::shared_ptr<TTransport> transport(new TBufferedTransport(socket));
     boost::shared_ptr<TProtocol> protocol(new TBinaryProtocol(transport));
     
