@@ -4,6 +4,9 @@
 #include "Serv.h"
 #include <thrift/protocol/TBinaryProtocol.h>
 #include <thrift/server/TSimpleServer.h>
+#include <thrift/concurrency/PosixThreadFactory.h>
+#include <thrift/server/TNonblockingServer.h>
+#include <thrift/server/TThreadPoolServer.h>
 #include <thrift/transport/TServerSocket.h>
 #include <thrift/transport/TBufferTransports.h>
 #include "stdio.h"
@@ -14,6 +17,7 @@ using namespace ::apache::thrift;
 using namespace ::apache::thrift::protocol;
 using namespace ::apache::thrift::transport;
 using namespace ::apache::thrift::server;
+using namespace ::apache::thrift::concurrency;
 using boost::shared_ptr;
 
 class ServHandler : virtual public ServIf {
@@ -56,14 +60,24 @@ private:
 };
 
 int main(int argc, char **argv) {
-    int port = 9090;
+    const int port = 9090;
     shared_ptr<ServHandler> handler(new ServHandler());
     shared_ptr<TProcessor> processor(new ServProcessor(handler));
+    
     shared_ptr<TServerTransport> serverTransport(new TServerSocket(port));
     shared_ptr<TTransportFactory> transportFactory(new TBufferedTransportFactory());
     shared_ptr<TProtocolFactory> protocolFactory(new TBinaryProtocolFactory());
     
-    TSimpleServer server(processor, serverTransport, transportFactory, protocolFactory);
+    //TSimpleServer server(processor, serverTransport, transportFactory, protocolFactory);
+    
+    // using thread pool with maximum 15 threads to handle incoming requests
+    shared_ptr<ThreadManager> threadManager = ThreadManager::newSimpleThreadManager(15);
+    shared_ptr<PosixThreadFactory> threadFactory = shared_ptr<PosixThreadFactory>(new PosixThreadFactory());
+    threadManager->threadFactory(threadFactory);
+    threadManager->start();
+
+    //TThreadPoolServer server(processor, serverTransport, transportFactory, protocolFactory, threadManager);
+    TNonblockingServer server(processor, protocolFactory, port, threadManager);
     printf("server started...\r\n");
     server.serve();
     return 0;

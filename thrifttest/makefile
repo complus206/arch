@@ -1,5 +1,5 @@
 prelable = -DHAVE_NETINET_IN_H -I/usr/local/include/thrift -L/usr/local/lib/
-thrftlib = -lthrift
+thrftlib = -lthrift -lthriftnb -levent
 clientlib = -lm -pthread -lz -lssl
 
 all : server client
