@@ -50,12 +50,13 @@ namespace Client
                 //Test One by One
                 Stopwatch watch = new Stopwatch();
                 watch.Start();
-                //CreateReserveOneByOne(client);
+                CreateReserveOneByOne(client);
                 watch.Stop();
                 Console.WriteLine("Create reseve one by one used {0}mss", watch.Elapsed.TotalMilliseconds);
 
                 //Test Batch
                 watch = new Stopwatch();
+                watch.Start();
                 CreateReserveBatch(client);
                 watch.Stop();
                 Console.WriteLine("Create reseve batch used {0}ms", watch.Elapsed.TotalMilliseconds);

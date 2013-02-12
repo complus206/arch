@@ -47,7 +47,14 @@ public:
     }
     
     bool createBatch(const std::vector<Reserve> & lst) {
-		printf("received %d reserve\r\n", (int)lst.size());    	
+		printf("received %d reserve\r\n", (int)lst.size());
+		int i = 0;
+		for(i = 0; i < 3; i++)
+		{
+			Reserve r = lst[i];
+			printf("data(%d) is reser_no=%d;guest_name='%s';mobile=%s;sum_price=%s;\r\n",
+                   i, r.reser_no, r.guest_name.c_str(), r.contacter_mobile.c_str(), r.sum_price.c_str());
+		}
   	}
 private:
     uint invokeTimes;
