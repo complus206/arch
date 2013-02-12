@@ -28,6 +28,7 @@ std::string ConvertToString(T);
 void CreateReserveOneByOne(string svrAddr, ServClient client);
 void CreateReserveBatch(string svrAddr, ServClient client);
 Reserve* CreateTestReserve(int index);
+void PrintDiffClock(const char* name, clock_t t1, clock_t t2);
 
 int main(int argc, char **argv) {
     
@@ -68,7 +69,6 @@ int main(int argc, char **argv) {
     diff = t2 - t1;
     printf("Finished t1=%f, t2=%f, diff=%f ...\r\n", (double)t1, (double)t2, diff / CLOCKS_PER_SEC);
     
-    
     transport->close();
     printf("client exit!\r\n");
         
@@ -89,15 +89,31 @@ void CreateReserveOneByOne(string svrAddr, ServClient client)
 
 void CreateReserveBatch(string svrAddr, ServClient client)
 {   
+	clock_t t1, t2, t3, t4;
+	
+	t1 = clock();
     std::vector<Reserve> lst(INVOKE_TIMES);
+    t2 = clock();
+    printf("vector size is %d\r\n", (int)lst.size());
+    
     int i = 0;
     for(int i = 0; i < INVOKE_TIMES; i++)
     {
         Reserve* r = CreateTestReserve(i);
-		lst.push_back(*r);
+		lst[i] = *r;
     }
     
+    t3 = clock();
+    printf("vector size is %d\r\n", (int)lst.size());
+    
     client.createBatch(lst);
+    
+    t4 = clock();
+    printf("vector size is %d\r\n", (int)lst.size());
+    
+    PrintDiffClock("declare vector", t1, t2);
+    PrintDiffClock("fill vector", t2, t3);
+    PrintDiffClock("invoke createBatch", t3, t4);
 }
 
 Reserve* CreateTestReserve(int index)
@@ -113,6 +129,12 @@ Reserve* CreateTestReserve(int index)
 	r->__set_sum_price(ConvertToString(500 + index % 50));
 	
 	return r;
+}
+
+void PrintDiffClock(const char* name, clock_t t1, clock_t t2)
+{
+	double diff = (double)(t2 - t1);
+	printf("%s: t1=%f, t2=%f, diff=%f ...\r\n", name, (double)t1, (double)t2, diff / CLOCKS_PER_SEC);
 }
 
 template <class T>
