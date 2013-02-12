@@ -43,27 +43,27 @@ int main(int argc, char **argv) {
     printf("connect to %s...\r\n", svrAddr.c_str());
     
     boost::shared_ptr<TSocket> socket(new TSocket(svrAddr, 9090));
-    boost::shared_ptr<TTransport> transport(new TBufferedTransport(socket));
+    boost::shared_ptr<TTransport> transport(new TFramedTransport(socket));
     boost::shared_ptr<TProtocol> protocol(new TBinaryProtocol(transport));
     
     transport->open();
     
     //Your Codes
     int i = 0;
-    const char* front = "student";
+    const char* front = "guest";
     for(int i = 0; i < INVOKE_TIMES; i++)
     {
-        Student* s = new Student();
-        s->__set_sno(i);
-        string sname = string(front);
-        sname = sname + ConvertToString(i);
-        s->__set_reser_no(sname);
-        s->__set_ssex(false);
-        s->__set_sage((i+1)*2);
+        Reserve* r = new Reserve();
+        r->__set_reser_no(i);
+        string guest_name = string(front);
+        guest_name = guest_name + ConvertToString(i);
+        r->__set_guest_name(guest_name);
+        r->__set_contacter_mobile(ConvertToString(13800138000 + i));
+        r->__set_sum_price(ConvertToString(500 + i%50));
         
         ServClient client(protocol);
-        client.put(*s);
-        delete s;
+        client.create(*r);
+        delete r;
     }
     
     transport->close();
