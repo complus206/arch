@@ -73,5 +73,6 @@ struct Reserve{
 72:	byte Contacter_Mobile_Type
 }  
 service Serv{  
- bool create(1: Reserve s),  
+ bool create(1: Reserve s),
+ bool createBatch(1: list<Reserve> lst)
 }  

@@ -26,14 +26,6 @@ public:
     ServHandler() {
         // Your initialization goes here
         invokeTimes = 0;
-        
-        clock_t t1 = clock();
-        sleep(0);
-        clock_t t2 = clock();
-        double diff = (double)(t2 - t1) / CLOCKS_PER_SEC * 10;
-        printf("CLOCKS_PER_SEC = %d\r\n", CLOCKS_PER_SEC);
-        printf("sleep %f seconds!\r\n", diff);
-        
     }
     
     bool create(const Reserve& s) {
@@ -46,15 +38,17 @@ public:
         
         if(this->invokeTimes % INVOKE_TIMES == 0)
         {
-            clock_t finish = clock();
-            double duration = (double)(finish - this->start);
-            printf("received %d times, used %fseconds, data is reser_no=%d;guest_name='%s';mobile=%s;sum_price=%s;\r\n",
-                   this->invokeTimes, duration, s.reser_no, s.guest_name.c_str(), s.contacter_mobile.c_str(), s.sum_price.c_str());
-            
+            double duration = (double)(clock() - this->start) / CLOCKS_PER_SEC;
             //reset clock
             this->start = clock();
+            printf("received %d times, used %fseconds, data is reser_no=%d;guest_name='%s';mobile=%s;sum_price=%s;\r\n",
+                   this->invokeTimes, duration, s.reser_no, s.guest_name.c_str(), s.contacter_mobile.c_str(), s.sum_price.c_str());
         }
     }
+    
+    bool createBatch(const std::vector<Reserve> & lst) {
+		printf("received %d reserve\r\n", (int)lst.size());    	
+  	}
 private:
     uint invokeTimes;
     clock_t start;

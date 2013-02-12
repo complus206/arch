@@ -27,6 +27,11 @@ class ServHandler : virtual public ServIf {
     printf("create\n");
   }
 
+  bool createBatch(const std::vector<Reserve> & lst) {
+    // Your implementation goes here
+    printf("createBatch\n");
+  }
+
 };
 
 int main(int argc, char **argv) {

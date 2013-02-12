@@ -16,6 +16,7 @@ class ServIf {
  public:
   virtual ~ServIf() {}
   virtual bool create(const Reserve& s) = 0;
+  virtual bool createBatch(const std::vector<Reserve> & lst) = 0;
 };
 
 class ServIfFactory {
@@ -46,6 +47,10 @@ class ServNull : virtual public ServIf {
  public:
   virtual ~ServNull() {}
   bool create(const Reserve& /* s */) {
+    bool _return = false;
+    return _return;
+  }
+  bool createBatch(const std::vector<Reserve> & /* lst */) {
     bool _return = false;
     return _return;
   }
@@ -159,6 +164,114 @@ class Serv_create_presult {
 
 };
 
+typedef struct _Serv_createBatch_args__isset {
+  _Serv_createBatch_args__isset() : lst(false) {}
+  bool lst;
+} _Serv_createBatch_args__isset;
+
+class Serv_createBatch_args {
+ public:
+
+  Serv_createBatch_args() {
+  }
+
+  virtual ~Serv_createBatch_args() throw() {}
+
+  std::vector<Reserve>  lst;
+
+  _Serv_createBatch_args__isset __isset;
+
+  void __set_lst(const std::vector<Reserve> & val) {
+    lst = val;
+  }
+
+  bool operator == (const Serv_createBatch_args & rhs) const
+  {
+    if (!(lst == rhs.lst))
+      return false;
+    return true;
+  }
+  bool operator != (const Serv_createBatch_args &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const Serv_createBatch_args & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+
+class Serv_createBatch_pargs {
+ public:
+
+
+  virtual ~Serv_createBatch_pargs() throw() {}
+
+  const std::vector<Reserve> * lst;
+
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+typedef struct _Serv_createBatch_result__isset {
+  _Serv_createBatch_result__isset() : success(false) {}
+  bool success;
+} _Serv_createBatch_result__isset;
+
+class Serv_createBatch_result {
+ public:
+
+  Serv_createBatch_result() : success(0) {
+  }
+
+  virtual ~Serv_createBatch_result() throw() {}
+
+  bool success;
+
+  _Serv_createBatch_result__isset __isset;
+
+  void __set_success(const bool val) {
+    success = val;
+  }
+
+  bool operator == (const Serv_createBatch_result & rhs) const
+  {
+    if (!(success == rhs.success))
+      return false;
+    return true;
+  }
+  bool operator != (const Serv_createBatch_result &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const Serv_createBatch_result & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+typedef struct _Serv_createBatch_presult__isset {
+  _Serv_createBatch_presult__isset() : success(false) {}
+  bool success;
+} _Serv_createBatch_presult__isset;
+
+class Serv_createBatch_presult {
+ public:
+
+
+  virtual ~Serv_createBatch_presult() throw() {}
+
+  bool* success;
+
+  _Serv_createBatch_presult__isset __isset;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+
+};
+
 class ServClient : virtual public ServIf {
  public:
   ServClient(boost::shared_ptr< ::apache::thrift::protocol::TProtocol> prot) :
@@ -182,6 +295,9 @@ class ServClient : virtual public ServIf {
   bool create(const Reserve& s);
   void send_create(const Reserve& s);
   bool recv_create();
+  bool createBatch(const std::vector<Reserve> & lst);
+  void send_createBatch(const std::vector<Reserve> & lst);
+  bool recv_createBatch();
  protected:
   boost::shared_ptr< ::apache::thrift::protocol::TProtocol> piprot_;
   boost::shared_ptr< ::apache::thrift::protocol::TProtocol> poprot_;
@@ -198,10 +314,12 @@ class ServProcessor : public ::apache::thrift::TDispatchProcessor {
   typedef std::map<std::string, ProcessFunction> ProcessMap;
   ProcessMap processMap_;
   void process_create(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
+  void process_createBatch(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
  public:
   ServProcessor(boost::shared_ptr<ServIf> iface) :
     iface_(iface) {
     processMap_["create"] = &ServProcessor::process_create;
+    processMap_["createBatch"] = &ServProcessor::process_createBatch;
   }
 
   virtual ~ServProcessor() {}
@@ -237,6 +355,15 @@ class ServMultiface : virtual public ServIf {
       ifaces_[i]->create(s);
     }
     return ifaces_[i]->create(s);
+  }
+
+  bool createBatch(const std::vector<Reserve> & lst) {
+    size_t sz = ifaces_.size();
+    size_t i = 0;
+    for (; i < (sz - 1); ++i) {
+      ifaces_[i]->createBatch(lst);
+    }
+    return ifaces_[i]->createBatch(lst);
   }
 
 };
