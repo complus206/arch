@@ -73,7 +73,7 @@ int main(int argc, char **argv) {
     //TSimpleServer server(processor, serverTransport, transportFactory, protocolFactory);
     
     // using thread pool with maximum 15 threads to handle incoming requests
-    shared_ptr<ThreadManager> threadManager = ThreadManager::newSimpleThreadManager(15);
+    shared_ptr<ThreadManager> threadManager = ThreadManager::newSimpleThreadManager(64);
     shared_ptr<PosixThreadFactory> threadFactory = shared_ptr<PosixThreadFactory>(new PosixThreadFactory());
     threadManager->threadFactory(threadFactory);
     threadManager->start();
