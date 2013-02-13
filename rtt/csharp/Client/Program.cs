@@ -12,9 +12,9 @@ namespace Client
 {
     class Program
     {
-        static readonly int threadCount = 1;
-        static ManualResetEvent[] manualEvents = new ManualResetEvent[threadCount];
-        static double[] statResults = new double[threadCount];
+        static int threadCount = 1;
+        static ManualResetEvent[] manualEvents;
+        static double[] statResults;
         static List<double> packageLog = new List<double>();
         static readonly int invokeCount = 100;
         static readonly int packageCount = 100;
@@ -39,11 +39,12 @@ namespace Client
                 {
                     svrAddr = args[0];
                 }
-                string clientID = "#1#";
                 if (args.Length > 1)
                 {
-                    clientID = "#" + args[1] + "#";
+                    threadCount = int.Parse(args[1].Trim());
                 }
+                manualEvents = new ManualResetEvent[threadCount];
+                statResults = new double[threadCount];
 
                 Console.WriteLine("Connect to server {0} ...", svrAddr);
 
