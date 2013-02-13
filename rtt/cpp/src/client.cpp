@@ -29,6 +29,7 @@ void CreateReserveOneByOne(string svrAddr, ServClient client);
 void CreateReserveBatch(string svrAddr, ServClient client);
 Reserve* CreateTestReserve(int index);
 void PrintDiffClock(const char* name, clock_t t1, clock_t t2);
+std::string GetStringFillings(int size);
 
 int main(int argc, char **argv) {
     
@@ -127,6 +128,7 @@ Reserve* CreateTestReserve(int index)
 	r->__set_guest_name(guest_name);
 	r->__set_contacter_mobile(ConvertToString(13800138000 + index));
 	r->__set_sum_price(ConvertToString(500 + index % 50));
+	//r->__set_other(GetStringFillings(200));
 	
 	return r;
 }
@@ -135,6 +137,18 @@ void PrintDiffClock(const char* name, clock_t t1, clock_t t2)
 {
 	double diff = (double)(t2 - t1);
 	printf("%s: t1=%f, t2=%f, diff=%f ...\r\n", name, (double)t1, (double)t2, diff / CLOCKS_PER_SEC);
+}
+
+std::string GetStringFillings(int size)
+{
+	const char* pack = "字符串测试";
+	std::string s;
+	int i = 0;
+	for(i = 0;i < size;i++)
+	{
+		s.append(pack);
+	}
+	return s;
 }
 
 template <class T>

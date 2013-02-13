@@ -11,7 +11,7 @@ namespace Client
 {
     class Program
     {
-        static readonly int invokeCount = 10000;
+        static readonly int invokeCount = 1000;
 
         static void Main(string[] args)
         {
@@ -101,8 +101,20 @@ namespace Client
             r.Guest_name = "guest" + index.ToString();
             r.Contacter_mobile = (13800138000 + index).ToString();
             r.Sum_price = (500 + index % 50).ToString();
+            r.Other = GetStringFillings(200);
 
             return r;
+        }
+
+        static string GetStringFillings(int size)
+        {
+            string pack = "测试字符串";
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < size; i++)
+            {
+                sb.Append(pack);
+            }
+            return sb.ToString();
         }
     }
 }
