@@ -89,6 +89,7 @@ namespace Client
                 //TTransport transport = new TSocket(svrAddr, 9090);
                 TTransport transport = new TFramedTransport(new TSocket(svrAddr, 9090));
                 TProtocol protocol = new TBinaryProtocol(transport);
+                //TProtocol protocol = new TCompactProtocol(transport);
 
                 transport.Open();
                 Serv.Client client = new Serv.Client(protocol);
