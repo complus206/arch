@@ -70,13 +70,13 @@ int main(int argc, char **argv) {
     
     shared_ptr<TServerTransport> serverTransport(new TServerSocket(port));
     shared_ptr<TTransportFactory> transportFactory(new TBufferedTransportFactory());
-    shared_ptr<TProtocolFactory> protocolFactory(new TBinaryProtocolFactory());
-    //shared_ptr<TProtocolFactory> protocolFactory(new TCompactProtocolFactory());
+    //shared_ptr<TProtocolFactory> protocolFactory(new TBinaryProtocolFactory());
+    shared_ptr<TProtocolFactory> protocolFactory(new TCompactProtocolFactory());
     
     //TSimpleServer server(processor, serverTransport, transportFactory, protocolFactory);
     
     // using thread pool with maximum 15 threads to handle incoming requests
-    shared_ptr<ThreadManager> threadManager = ThreadManager::newSimpleThreadManager(256);
+    shared_ptr<ThreadManager> threadManager = ThreadManager::newSimpleThreadManager(64);
     shared_ptr<PosixThreadFactory> threadFactory = shared_ptr<PosixThreadFactory>(new PosixThreadFactory());
     threadManager->threadFactory(threadFactory);
     threadManager->start();

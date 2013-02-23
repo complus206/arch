@@ -35,11 +35,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="com.eLong.Hotel.Framework.Utility">
+      <HintPath>..\lib\com.eLong.Hotel.Framework.Utility.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="Thrift">
@@ -51,6 +53,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reserve.cs" />
     <Compile Include="Serv.cs" />
+    <Compile Include="ThreadPool.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

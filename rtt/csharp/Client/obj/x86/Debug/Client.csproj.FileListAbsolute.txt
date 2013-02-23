@@ -6,3 +6,13 @@ D:\TestCode\rtt\Client\bin\Debug\Thrift.dll
 D:\TestCode\rtt\Client\bin\Debug\Thrift.pdb
 D:\TestCode\rtt\Client\obj\x86\Debug\Client.exe
 D:\TestCode\rtt\Client\obj\x86\Debug\Client.pdb
+D:\TestCode\github\arch\rtt\csharp\Client\bin\Debug\Client.exe.config
+D:\TestCode\github\arch\rtt\csharp\Client\obj\x86\Debug\Client.exe
+D:\TestCode\github\arch\rtt\csharp\Client\obj\x86\Debug\Client.pdb
+D:\TestCode\github\arch\rtt\csharp\Client\bin\Debug\Client.exe
+D:\TestCode\github\arch\rtt\csharp\Client\bin\Debug\Client.pdb
+D:\TestCode\github\arch\rtt\csharp\Client\bin\Debug\com.eLong.Hotel.Framework.Utility.dll
+D:\TestCode\github\arch\rtt\csharp\Client\bin\Debug\Thrift.dll
+D:\TestCode\github\arch\rtt\csharp\Client\bin\Debug\com.eLong.Hotel.Framework.Utility.pdb
+D:\TestCode\github\arch\rtt\csharp\Client\bin\Debug\Thrift.pdb
+D:\TestCode\github\arch\rtt\csharp\Client\obj\x86\Debug\ResolveAssemblyReference.cache

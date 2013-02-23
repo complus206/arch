@@ -6,3 +6,13 @@ D:\TestCode\rtt\Client\bin\Release\Thrift.pdb
 D:\TestCode\rtt\Client\obj\x86\Release\ResolveAssemblyReference.cache
 D:\TestCode\rtt\Client\obj\x86\Release\Client.exe
 D:\TestCode\rtt\Client\obj\x86\Release\Client.pdb
+D:\TestCode\github\arch\rtt\csharp\Client\bin\Release\Client.exe.config
+D:\TestCode\github\arch\rtt\csharp\Client\obj\x86\Release\Client.exe
+D:\TestCode\github\arch\rtt\csharp\Client\obj\x86\Release\Client.pdb
+D:\TestCode\github\arch\rtt\csharp\Client\bin\Release\Client.exe
+D:\TestCode\github\arch\rtt\csharp\Client\bin\Release\Client.pdb
+D:\TestCode\github\arch\rtt\csharp\Client\bin\Release\com.eLong.Hotel.Framework.Utility.dll
+D:\TestCode\github\arch\rtt\csharp\Client\bin\Release\Thrift.dll
+D:\TestCode\github\arch\rtt\csharp\Client\bin\Release\com.eLong.Hotel.Framework.Utility.pdb
+D:\TestCode\github\arch\rtt\csharp\Client\bin\Release\Thrift.pdb
+D:\TestCode\github\arch\rtt\csharp\Client\obj\x86\Release\ResolveAssemblyReference.cache

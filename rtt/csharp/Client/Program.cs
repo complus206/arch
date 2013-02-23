@@ -7,6 +7,8 @@ using Thrift.Transport;
 using Thrift.Protocol;
 using ClientConsole;
 using System.Threading;
+using com.eLong.Hotel.Framework.Utility;
+using System.IO;
 
 namespace Client
 {
@@ -34,7 +36,7 @@ namespace Client
                     sb.Append("中文测试");
                 }
 
-                svrAddr = "localhost";
+                svrAddr = "10.0.1.7";
                 if (args.Length > 0)
                 {
                     svrAddr = args[0];
@@ -43,32 +45,8 @@ namespace Client
                 {
                     threadCount = int.Parse(args[1].Trim());
                 }
-                manualEvents = new ManualResetEvent[threadCount];
-                statResults = new double[threadCount];
 
-                Console.WriteLine("Connect to server {0} ...", svrAddr);
-
-                //Prepare threads
-                
-                List<Thread> threadList = new List<Thread>();
-                for (int i = 0; i < threadCount; i++)
-                {
-                    manualEvents[i] = new ManualResetEvent(false);
-                    ParameterizedThreadStart pts = new ParameterizedThreadStart(WorkFunc);
-                    Thread t = new Thread(pts);
-                    threadList.Add(t);
-                }
-
-                //Start threads
-                for (int i = 0; i < threadList.Count; i++)
-                {
-                    threadList[i].Start(i);
-                }
-
-                //Wait threads
-                WaitHandle.WaitAll(manualEvents);
-
-                OutputStatResult();
+                TestFunc(svrAddr, threadCount);
             }
             catch (Exception ex)
             {
@@ -80,6 +58,71 @@ namespace Client
                 Console.WriteLine("Client exit!");
             }
         }
+
+        static void TestFunc(string svrAddr, int threadCount)
+        {
+            List<Reserve> list = new List<Reserve>();
+            for (int j = 0; j < packageCount; j++)
+            {
+                Reserve r = CreateTestReserve(j);
+                list.Add(r);
+            }
+
+            ThriftPool pool = new ThriftPool(new ThriftConfig()
+            {
+                #region 配置连接池
+
+                Host = svrAddr,
+                Port = 9090,
+                Timeout = 60,
+                MaxActive = 100,
+                MaxIdle = 20,
+                MinIdle = 5,
+                Encode = Encoding.UTF8
+
+                #endregion
+            });
+
+            PerformanceTestHelper helper = new PerformanceTestHelper((index) =>
+            {
+                TTransport transport = pool.BorrowInstance();
+                //TTransport transport = new TFramedTransport(new TSocket(svrAddr, 9090));
+                //TProtocol protocol = new TBinaryProtocol(transport);
+                TProtocol protocol = new TCompactProtocol(transport);
+                //transport.Open();
+                Serv.Client client = new Serv.Client(protocol);
+
+                client.createBatch(list);
+
+                pool.ReturnInstance(transport);
+                //transport.Close();
+
+            }, threadCount, 1000, true);
+            helper.Run();
+        }
+
+        static void TestSearilize()
+        {
+            MemoryStream inStream = new MemoryStream();
+            MemoryStream outStream = new MemoryStream();
+            var streamTrans = new Thrift.Transport.TStreamTransport(inStream, outStream);
+            var jsonProto = new Thrift.Protocol.TJSONProtocol(streamTrans);
+            var obj = CreateTestReserve(0);
+            obj.Write(jsonProto);
+
+            byte[] buffer = new byte[outStream.Length];
+            outStream.Position = 0;
+            outStream.Read(buffer, 0, buffer.Length);
+
+            using (FileStream fs = new FileStream(".\\1.json", FileMode.Create, FileAccess.Write))
+            {
+                fs.Write(buffer, 0, buffer.Length);
+            }
+
+            inStream.Close();
+            outStream.Close();
+        }
+
 
         static void WorkFunc(object obj)
         {
