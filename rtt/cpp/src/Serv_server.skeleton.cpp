@@ -5,6 +5,7 @@
 #include "Serv.h"
 #include <thrift/protocol/TBinaryProtocol.h>
 #include <thrift/protocol/TCompactProtocol.h>
+#include <thrift/protocol/TJSONProtocol.h>
 #include <thrift/server/TSimpleServer.h>
 #include <thrift/concurrency/PosixThreadFactory.h>
 #include <thrift/server/TNonblockingServer.h>
@@ -15,6 +16,7 @@
 #include "stdlib.h"
 #include "time.h"
 
+using namespace std;
 using namespace ::apache::thrift;
 using namespace ::apache::thrift::protocol;
 using namespace ::apache::thrift::transport;
@@ -22,6 +24,7 @@ using namespace ::apache::thrift::server;
 using namespace ::apache::thrift::concurrency;
 using boost::shared_ptr;
 
+void StartNonblockingServer(int port, int protol, int serverType, int threadCount);
 
 class ServHandler : virtual public ServIf {
 public:
@@ -64,28 +67,86 @@ private:
 };
 
 int main(int argc, char **argv) {
-    const int port = 9090;
-    shared_ptr<ServHandler> handler(new ServHandler());
+    int port = 9090;
+    int protol = 0;			//default protol is binary
+    int serverType = 0;		//default server is none bolock
+    int threadCount = 64;	//default thread count
+    if(argc > 1)
+    {
+        **argv++;
+        protol = atoi(string(*argv).c_str());
+    }
+    
+    if(argc > 2)
+    {
+        **argv++;
+        serverType = atoi(string(*argv).c_str());
+    }
+    
+    if(argc > 3)
+    {
+        **argv++;
+        threadCount = atoi(string(*argv).c_str());
+    }
+
+	
+	StartNonblockingServer(port, protol, serverType, threadCount);
+	
+    return 0;
+}
+
+void StartNonblockingServer(int port, int protol, int serverType, int threadCount)
+{
+	shared_ptr<ServHandler> handler(new ServHandler());
     shared_ptr<TProcessor> processor(new ServProcessor(handler));
     
     shared_ptr<TServerTransport> serverTransport(new TServerSocket(port));
     shared_ptr<TTransportFactory> transportFactory(new TBufferedTransportFactory());
-    //shared_ptr<TProtocolFactory> protocolFactory(new TBinaryProtocolFactory());
-    shared_ptr<TProtocolFactory> protocolFactory(new TCompactProtocolFactory());
     
-    //TSimpleServer server(processor, serverTransport, transportFactory, protocolFactory);
+    //设置数据格式
+    TProtocolFactory* fac;
+    if(protol == 0)
+    {
+    	fac = new TBinaryProtocolFactory();
+    }
+    else if(protol == 1)
+    {
+    	fac = new TCompactProtocolFactory();
+    }
+    else
+    {
+    	fac = new TJSONProtocolFactory();
+    }
+    shared_ptr<TProtocolFactory> protocolFactory(fac);
     
-    // using thread pool with maximum 15 threads to handle incoming requests
-    shared_ptr<ThreadManager> threadManager = ThreadManager::newSimpleThreadManager(64);
-    shared_ptr<PosixThreadFactory> threadFactory = shared_ptr<PosixThreadFactory>(new PosixThreadFactory());
-    threadManager->threadFactory(threadFactory);
-    threadManager->start();
-    
-    //TThreadPoolServer server(processor, serverTransport, transportFactory, protocolFactory, threadManager);
-    TNonblockingServer server(processor, protocolFactory, port, threadManager);
     printf("server started...\r\n");
-    server.serve();
-    return 0;
-
+	if(serverType == 0)
+	{
+		// using thread pool with maximum 15 threads to handle incoming requests
+    	shared_ptr<ThreadManager> threadManager = ThreadManager::newSimpleThreadManager(threadCount);
+    	shared_ptr<PosixThreadFactory> threadFactory = shared_ptr<PosixThreadFactory>(new PosixThreadFactory());
+    	threadManager->threadFactory(threadFactory);
+    	threadManager->start();
+    
+    	//TThreadPoolServer server(processor, serverTransport, transportFactory, protocolFactory, threadManager);
+    	TNonblockingServer server(processor, protocolFactory, port, threadManager);
+    	server.serve();
+	}
+	else if(serverType == 1)
+	{
+		// using thread pool with maximum 15 threads to handle incoming requests
+    	shared_ptr<ThreadManager> threadManager = ThreadManager::newSimpleThreadManager(threadCount);
+    	shared_ptr<PosixThreadFactory> threadFactory = shared_ptr<PosixThreadFactory>(new PosixThreadFactory());
+    	threadManager->threadFactory(threadFactory);
+    	threadManager->start();
+    
+    	TThreadPoolServer server(processor, serverTransport, transportFactory, protocolFactory, threadManager);
+    	server.serve();
+	}
+    else
+    {
+    	TSimpleServer server(processor, serverTransport, transportFactory, protocolFactory);
+    	server.serve();
+    }
 }
 
