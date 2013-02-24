@@ -83,22 +83,25 @@ namespace Client
                 #endregion
             });
 
-            PerformanceTestHelper helper = new PerformanceTestHelper((index) =>
+            using (FileStream fs = new FileStream(".\\output.log", FileMode.Create, FileAccess.Write))
             {
-                TTransport transport = pool.BorrowInstance();
-                //TTransport transport = new TFramedTransport(new TSocket(svrAddr, 9090));
-                //TProtocol protocol = new TBinaryProtocol(transport);
-                TProtocol protocol = new TCompactProtocol(transport);
-                //transport.Open();
-                Serv.Client client = new Serv.Client(protocol);
+                PerformanceTestHelper helper = new PerformanceTestHelper((index) =>
+                {
+                    TTransport transport = pool.BorrowInstance();
+                    //TTransport transport = new TFramedTransport(new TSocket(svrAddr, 9090));
+                    //TProtocol protocol = new TBinaryProtocol(transport);
+                    TProtocol protocol = new TCompactProtocol(transport);
+                    //transport.Open();
+                    Serv.Client client = new Serv.Client(protocol);
 
-                client.createBatch(list);
+                    client.createBatch(list);
 
-                pool.ReturnInstance(transport);
-                //transport.Close();
+                    pool.ReturnInstance(transport);
+                    //transport.Close();
 
-            }, threadCount, 1000, true);
-            helper.Run();
+                }, threadCount, 1000, true, fs);
+                helper.Run();
+            }
         }
 
         static void TestSearilize()
